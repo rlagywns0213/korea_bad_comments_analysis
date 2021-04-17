@@ -1,18 +1,32 @@
-# 준지도 학습을 적용한 악성 댓글 분류 모델들의 성능 비교 (Capstone design 2020-2)
-* 김효준
+# 준지도 학습을 적용한 악성 댓글 분류 모델들의 성능 비교 (Capstone design 2021-1)
+* 작성자 : 김효준
 
-## Overview
-* Needs, problems
-* Goals, objectives (evaluation)
+## 1. 과제 개요
+가. 과제 선정 배경 및 필요성
+- 최근, SNS가 활발해지면서 영화, 쇼핑, 뉴스 등 다양한 산업 분야에서 많은 익명의 리뷰들이 등장
+- 익명의 특성으로 인해 단순 욕설, 차별적인 말, 타인 비하 등 불쾌감을 주는 리뷰로 인해 피해받고 있는 실정
+- 현재, 네이버 AI 악플 감지기 서비스가 있지만, 반어적인 어투 또는 비꼬는 말 등의 여러 악성 리뷰를 판단하지 못하는 경우가 있기에 더 높은 정확도가 요구되는 모델 필요
+- 더구나, 크롤링 기법을 통해 악성 데이터를 수집하는데 있어 진입장벽이 낮지만, 이러한 데이터를 일일이 악성 라벨링 해주는데 들어가는 시간적 비용이 막대한 실정
+- 기존 논문에 의하면, 모델의 성능 비교에 그치는 반면, 본 과제는 더 복잡한 신경망 구조의 모델을 활용하여 준지도 학습을 도입하고자 함
 
-## Results
-* Main code, table, graph, comparison, ...
-* Web link
+나. 과제 주요내용
 
-## Conclusion
-* Summary, contribution, ...
+- 데이터셋 선정
+      1) Korean HateSpeech Dataset
+      2) AI 허브 인공지능 윤리 연구를 위한 비정형 텍스트 데이터셋
 
-## Reports
-* Upload or link (e.g. Google Drive files with share setting)
-* Midterm: [Report](Reports/Midterm.pdf)
-* Final: [Report](Reports/Final.pdf), [Demo video](Reports/Demo.mp4)
+## 2. 분석 방향
+
+1. 텍스트 전처리 - 불용어 제거
+2. 형태소 분석 (KoNLPy 라이브러리 사용) : 명사, 형사 추출
+
+3. 3가지 워드 임베딩
+
+   - ⓵ TF-IDF를 통한 워드임베딩
+   - ⓶ Word2Vec 모델을 통한 워드임베딩
+   - ⓷ fasttext 모델을 통한 워드임베딩
+
+
+4. 모델링
+ - BiLSTM, CNN + BiLSTM, BiLSTM + Attention 3가지 예측 모델 구축
+ - Pseudo-Label 기반의 준지도 학습을 적용하여 모델 성능 개선
