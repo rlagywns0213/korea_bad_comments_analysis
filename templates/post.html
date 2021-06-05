@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Post</title>
+    <script type="text/javascript">
+
+     alert("욕설 분석 완료.");
+
+    </script>
+
+</head>
+<body>
+        <h2> 욕설결과 </h2>
+        {% if score < 0.5 %}
+            <p> 해당 문장은 욕설이 아닙니다.</p>
+        {% elif score >= 0.5 %}
+            <p> 해당 문장은 {{score}} 의 확률로 욕설을 포함합니다.</p>
+        {% endif %}
+
+
+
+</body>
+</html>
