@@ -1,17 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <title>User</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 </head>
-<body>
-     <form action="/post" method="post">
-        <p>문장을 입력하세요 : <input type="text" name="test"></p>
-<!--        <p>해당 페이지에서 원하는 정보를 입력하세요 : <input type="text" name="text1"></p>-->
-<!--        <p>해당 페이지에서 원하는 정보를 입력하세요 : <input type="text" name="text2"></p>-->
-<!--        <p>해당 페이지에서 원하는 정보를 입력하세요 : <input type="text" name="text3"></p>-->
-        <input type="submit" value="욕설인지 테스트하기">
-    </form>
+<script>
+$(document).ready(function(){
+    $('#result_page').css('display','none');
+    $('#bad').css('display','none');
+    $('#not_bad').css('display','none');
 
+    $('#execute').click(function(){
+        var id = $('#send_text').val();
+        postdata ={"send_data" : id};
+        $.ajax({
+                type: 'POST',
+                url: '{{url_for('ajax_model')}}',
+                contentType: 'application/json;charset=UTF-8',
+                data: JSON.stringify(postdata),
+                success: function(data){
+                    score = Number(data);
+                    $('.score').html(score+"%");
+                    $('#result_page').css('display','block');
+                    if(score >50){
+                        $('#bad').css('display','block');
+                        $('#not_bad').css('display','none');
+                    }else{
+                        $('#not_bad').css('display','block');
+                        $('#bad').css('display','none');
+                    }
+                    console.log(data);
+                },
+                error: function(request, status, error){
+                    alert('ajax 통신 실패')
+                }
+            })
+        });
+ });
+
+</script>
+<body style="font-family: 'Jua', sans-serif;">
+<center>
+
+    <div style="margin:50px auto;">
+        <h1><p><span style="border-radius: 15px 15px 15px 0; border-bottom: 5px solid #B9C4C4; padding: 0.5em; background: #CEDADA;"> 욕설 판독기</span></p></h1>
+        <p>문장을 입력하세요 : <input style='width:200px;height:100px;' type="text" id="send_text" name="test" autocomplete="off"></p>
+    <!--        <p>해당 페이지에서 원하는 정보를 입력하세요 : <input type="text" name="text1"></p>-->
+    <!--        <p>해당 페이지에서 원하는 정보를 입력하세요 : <input type="text" name="text2"></p>-->
+    <!--        <p>해당 페이지에서 원하는 정보를 입력하세요 : <input type="text" name="text3"></p>-->
+         <button id='execute' style="font-family: 'Jua', sans-serif;">욕설인지 테스트하기</button>
+    </div>
+
+
+    <div id="result_page">
+        <div id="not_bad">
+            <h2> 욕설결과 </h2>
+            <span style="background: #F9F7F6; border-left: 0.5em solid #688FF4; padding: 0.5em;">해당 문장은 욕설이 아닙니다.</span>
+            <br>
+            <h3> 예상 수치 </h3>
+            <p><span style="border-radius: 15px 15px 15px 0; border: 3px solid #FFAD5B; padding: 0.5em 0.6em; color: #FF8000;">해당 문장이 욕설을 포함할 확률이  <span class="score"></span> 입니다.</span></p>
+        </div>
+        <div id="bad">
+            <h2> 욕설결과 </h2>
+            <span style="background: #F9F7F6; border-left: 0.5em solid #688FF4; padding: 0.5em;">해당 문장은 욕설입니다.</span>
+            <br>
+            <h3> 예상 수치 </h3>
+            <p><span style="border-radius: 15px 15px 15px 0; border: 3px solid #FFAD5B; padding: 0.5em 0.6em; color: #FF8000;">해당 문장은 <span class="score"></span>의 확률로 욕설을 포함합니다.</span></p>
+        </div>
+    </div>
+</center>
 </body>
+
+
 </html>
