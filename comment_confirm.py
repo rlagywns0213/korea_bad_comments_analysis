@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request
-import pandas as pd
 from tensorflow.keras.layers import Dense, Embedding, Bidirectional, LSTM, Concatenate, Dropout
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras import Input, Model
@@ -11,33 +10,7 @@ import pickle
 import tensorflow as tf
 import re
 
-class BahdanauAttention(tf.keras.Model):
-    def __init__(self, units):
-        super(BahdanauAttention, self).__init__()
-        self.W1 = Dense(units)
-        self.W2 = Dense(units)
-        self.V = Dense(1)
-
-    def call(self, values, query): # 단, key와 value는 같음
-        # query shape == (batch_size, hidden size)
-        # hidden_with_time_axis shape == (batch_size, 1, hidden size)
-        # score 계산을 위해 뒤에서 할 덧셈을 위해서 차원을 변경해줍니다.
-        hidden_with_time_axis = tf.expand_dims(query, 1)
-
-        # score shape == (batch_size, max_length, 1)
-        # we get 1 at the last axis because we are applying score to self.V
-        # the shape of the tensor before applying self.V is (batch_size, max_length, units)
-        score = self.V(tf.nn.tanh(
-            self.W1(values) + self.W2(hidden_with_time_axis)))
-
-        # attention_weights shape == (batch_size, max_length, 1)
-        attention_weights = tf.nn.softmax(score, axis=1)
-
-        # context_vector shape after sum == (batch_size, hidden_size)
-        context_vector = attention_weights * values
-        context_vector = tf.reduce_sum(context_vector, axis=1)
-
-        return context_vector, attention_weights
+lstm_model = BahdanauAttention.BahdanauAttention(64)
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False #한글 깨짐 현상
@@ -74,7 +47,7 @@ lstm, forward_h, forward_c, backward_h, backward_c = Bidirectional(
 
 state_h = Concatenate()([forward_h, backward_h])  # 은닉 상태
 state_c = Concatenate()([forward_c, backward_c])  # 셀 상태
-attention = BahdanauAttention(64)  # 가중치 크기 정의
+attention = lstm_model # 가중치 크기 정의
 context_vector, attention_weights = attention(lstm, state_h)
 
 dense1 = Dense(20, activation="relu")(context_vector)
@@ -108,6 +81,12 @@ def post():
     score = sentiment_predict(original_test)
 
     return render_template('post.html',  score=score)
+
+@app.route('/ajax_model', methods=['GET','POST'])
+def ajax_model():
+    original_test = request.json['send_data']
+    score = sentiment_predict(original_test)
+    return str(score*100)
 
 if __name__ == '__main__':
     app.run()
