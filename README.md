@@ -1,6 +1,6 @@
 # 특정 도메인에서의 데이터 증강 기법을 적용한 악성 댓글 분류 모델의 성능 비교 (Capstone design 2021-1)
 * 작성자 : 김효준
-* 시연 영상 : www
+* 시연 영상 : https://www.youtube.com/watch?v=lxGtqH9nYyw
 
 ## Process
 
